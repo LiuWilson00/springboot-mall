@@ -1,12 +1,10 @@
-package com.royliu.springbootmall.model;
+package com.royliu.springbootmall.viewobject;
 
 import com.royliu.springbootmall.constant.ProductStatus;
 
-
 import java.util.Date;
 
-
-public class Product {
+public class ProductVO {
 
     private Integer productId;
     private String productName;
@@ -15,14 +13,41 @@ public class Product {
     private Integer price;
     private Integer stock;
     private String description;
+    private Integer status;
+    private String categoryName;
+    private Date createdDate;
 
-    private ProductStatus status;
+    public Date getCreatedDate() {
+        return createdDate;
+    }
 
-    public ProductStatus getStatus() {
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    private Date lastModifiedDate;
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String category_name) {
+        this.categoryName = category_name;
+    }
+
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(ProductStatus status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
@@ -82,23 +107,5 @@ public class Product {
         this.description = description;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public Date getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(Date lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
-    private Date createdDate;
-    private Date lastModifiedDate;
 
 }

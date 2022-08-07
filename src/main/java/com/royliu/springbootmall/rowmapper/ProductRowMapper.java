@@ -1,5 +1,6 @@
 package com.royliu.springbootmall.rowmapper;
 
+import com.royliu.springbootmall.constant.ProductStatus;
 import com.royliu.springbootmall.model.Product;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -7,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-public class ProductRowMapper  implements RowMapper<Product> {
+public class ProductRowMapper implements RowMapper<Product> {
 
 
     @Override
@@ -23,6 +24,7 @@ public class ProductRowMapper  implements RowMapper<Product> {
         product.setDescription(resultSet.getString("description"));
         product.setCreatedDate(resultSet.getTimestamp("created_date"));
         product.setLastModifiedDate(resultSet.getTimestamp("last_modified_date"));
+        product.setStatus(ProductStatus.valueOfLabel(resultSet.getInt("status")));
 
         return product;
     }

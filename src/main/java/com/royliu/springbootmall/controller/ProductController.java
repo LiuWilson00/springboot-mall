@@ -2,6 +2,7 @@ package com.royliu.springbootmall.controller;
 
 import com.royliu.springbootmall.model.Product;
 import com.royliu.springbootmall.service.ProductService;
+import com.royliu.springbootmall.viewobject.ProductVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +17,9 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/products/{productId}")
-    public ResponseEntity<Product> getProduct(@PathVariable Integer productId){
+    public ResponseEntity<ProductVO> getProduct(@PathVariable Integer productId){
 
-        Product product = productService.getProductById(productId);
+        ProductVO product = productService.getProductById(productId);
 
 
         if(product != null){

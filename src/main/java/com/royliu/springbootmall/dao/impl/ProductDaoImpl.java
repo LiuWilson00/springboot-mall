@@ -1,8 +1,8 @@
 package com.royliu.springbootmall.dao.impl;
 
 import com.royliu.springbootmall.dao.ProductDao;
-import com.royliu.springbootmall.model.Product;
-import com.royliu.springbootmall.rowmapper.ProductRowMapper;
+import com.royliu.springbootmall.rowmapper.ProductVORowMapper;
+import com.royliu.springbootmall.viewobject.ProductVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -18,14 +18,16 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public Product getProductById(Integer productId) {
-        String sql = "SELECT product_id,product_name,category_id,image_url,price,description,stock," +
-                "category_id,created_date,last_modified_date " +
-                "FROM product WHERE product_id=:productId";
+    public ProductVO getProductById(Integer productId) {
+        String sql = "SELECT product_id,product_name,p.category_id,p.image_url," +
+                "price,description,stock," +
+                "category_name,p.status,p.created_date,p.last_modified_date " +
+                "FROM product p JOIN category c ON c.category_id = p.category_id " +
+                "WHERE product_id=:productId and p.status = 1";
         Map<String, Object> map = new HashMap<>();
         map.put("productId", productId);
 
-        List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
+        List<ProductVO> productList = namedParameterJdbcTemplate.query(sql, map, new ProductVORowMapper());
 
 
         if (productList.size() > 0) {
