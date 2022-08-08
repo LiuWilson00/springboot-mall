@@ -10,7 +10,7 @@ public enum ProductStatus {
     public final int label;
 
     ProductStatus(int i) {
-        this.label = 1;
+        this.label = i;
     }
 
     public static ProductStatus valueOfLabel(int label) {

@@ -1,39 +1,24 @@
-package com.royliu.springbootmall.model;
+package com.royliu.springbootmall.dto;
 
 import com.royliu.springbootmall.constant.ProductStatus;
 
+import javax.validation.constraints.NotNull;
 
-import java.util.Date;
+public class ProductRequest {
 
 
-public class Product {
-
-    private Integer productId;
+    @NotNull
     private String productName;
+    @NotNull
     private Integer categoryId;
+    @NotNull
     private String imageUrl;
+    @NotNull
     private Integer price;
+    @NotNull
     private Integer stock;
     private String description;
-    private ProductStatus status;
-    private Date createdDate;
-    private Date lastModifiedDate;
-
-    public ProductStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ProductStatus status) {
-        this.status = status;
-    }
-
-    public Integer getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Integer productId) {
-        this.productId = productId;
-    }
+    private Integer status;
 
     public String getProductName() {
         return productName;
@@ -83,22 +68,11 @@ public class Product {
         this.description = description;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
+    public void setStatus(Integer status) {
+        this.status = status;
     }
-
-    public Date getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(Date lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
-
-
 }

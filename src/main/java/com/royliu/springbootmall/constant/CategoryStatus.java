@@ -8,7 +8,7 @@ public enum CategoryStatus {
     public final int label;
 
     CategoryStatus(int i) {
-        this.label = 1;
+        this.label = i;
     }
     public static CategoryStatus valueOfLabel(int label) {
         for (CategoryStatus e : values()) {

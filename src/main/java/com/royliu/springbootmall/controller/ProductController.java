@@ -1,33 +1,82 @@
 package com.royliu.springbootmall.controller;
 
+import com.royliu.springbootmall.constant.errors.ProductErrors;
+import com.royliu.springbootmall.dto.ProductRequest;
+import com.royliu.springbootmall.model.Category;
 import com.royliu.springbootmall.model.Product;
+import com.royliu.springbootmall.service.CategoryService;
 import com.royliu.springbootmall.service.ProductService;
 import com.royliu.springbootmall.viewobject.ProductVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 public class ProductController {
 
     @Autowired
     private ProductService productService;
+    @Autowired
+    private CategoryService categoryService;
 
     @GetMapping("/products/{productId}")
-    public ResponseEntity<ProductVO> getProduct(@PathVariable Integer productId){
+    public ResponseEntity<ProductVO> getProduct(@PathVariable Integer productId) {
 
         ProductVO product = productService.getProductById(productId);
 
 
-        if(product != null){
+        if (product != null) {
             return ResponseEntity.status(HttpStatus.OK).body(product);
-        }else {
+        } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
 
     }
+
+    @PostMapping("/products")
+    public ResponseEntity createProduct(@RequestBody @Valid ProductRequest productRequest) {
+        ResponseEntity checkCategory = checkCategoryExist(productRequest.getCategoryId());
+        if (checkCategory != null) {
+            return checkCategory;
+        }
+
+        int newProductId = productService.createProduct(productRequest);
+        ProductVO newProduct = productService.getProductById(newProductId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(newProduct);
+
+    }
+
+    @PutMapping("/products/{productId}")
+    public ResponseEntity updateProduct(@PathVariable Integer productId, @RequestBody ProductRequest productRequest) {
+        ResponseEntity checkCategory = checkCategoryExist(productRequest.getCategoryId());
+        if (checkCategory != null) {
+            return checkCategory;
+        }
+
+        ProductVO product = productService.getProductById(productId);
+
+        if(product==null){
+            return  ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        productService.updateProduct(productId,productRequest);
+        ProductVO updateProduct = productService.getProductById(productId);
+        return ResponseEntity.status(HttpStatus.OK).body(updateProduct);
+    }
+
+
+    private ResponseEntity checkCategoryExist(Integer categoryId) {
+        Category category = categoryService.getCategoryById(categoryId);
+        if (category == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ProductErrors.CATEGORY_NOT_EXIST.msg);
+        }
+
+        return null;
+    }
+
 }
