@@ -38,7 +38,7 @@ public class ProductController {
     }
 
     @PostMapping("/products")
-    public ResponseEntity createProduct(@RequestBody @Valid ProductRequest productRequest) {
+    public ResponseEntity<?> createProduct(@RequestBody @Valid ProductRequest productRequest) {
         ResponseEntity checkCategory = checkCategoryExist(productRequest.getCategoryId());
         if (checkCategory != null) {
             return checkCategory;
@@ -52,7 +52,7 @@ public class ProductController {
     }
 
     @PutMapping("/products/{productId}")
-    public ResponseEntity updateProduct(@PathVariable Integer productId, @RequestBody ProductRequest productRequest) {
+    public ResponseEntity<?> updateProduct(@PathVariable Integer productId, @RequestBody ProductRequest productRequest) {
         ResponseEntity checkCategory = checkCategoryExist(productRequest.getCategoryId());
         if (checkCategory != null) {
             return checkCategory;
@@ -60,17 +60,24 @@ public class ProductController {
 
         ProductVO product = productService.getProductById(productId);
 
-        if(product==null){
-            return  ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        if (product == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        productService.updateProduct(productId,productRequest);
+        productService.updateProduct(productId, productRequest);
         ProductVO updateProduct = productService.getProductById(productId);
         return ResponseEntity.status(HttpStatus.OK).body(updateProduct);
     }
 
+    @DeleteMapping("/products/{productId}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Integer productId) {
+        productService.deleteProductById(productId);
 
-    private ResponseEntity checkCategoryExist(Integer categoryId) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+
+    private ResponseEntity<?> checkCategoryExist(Integer categoryId) {
         Category category = categoryService.getCategoryById(categoryId);
         if (category == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ProductErrors.CATEGORY_NOT_EXIST.msg);
