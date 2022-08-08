@@ -1,7 +1,10 @@
 package com.royliu.springbootmall.dao.impl;
 
+import com.royliu.springbootmall.constant.ProductStatus;
 import com.royliu.springbootmall.dao.ProductDao;
+import com.royliu.springbootmall.dto.ProductQueryParams;
 import com.royliu.springbootmall.dto.ProductRequest;
+import com.royliu.springbootmall.model.Category;
 import com.royliu.springbootmall.rowmapper.ProductVORowMapper;
 import com.royliu.springbootmall.viewobject.ProductVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +26,66 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
+    public List<ProductVO> getProducts(ProductQueryParams productQueryParams) {
+        String sql = "SELECT product_id,product_name,p.category_id,p.image_url," +
+                "price,description,stock," +
+                "category_name,p.status,p.created_date,p.last_modified_date " +
+                "FROM product p JOIN category c ON c.category_id = p.category_id " +
+                "WHERE 1=1";
+        Map<String, Object> map = new HashMap<>();
+        map.put("defaultStatusId", ProductStatus.DEFAULT.label);
+
+        if (productQueryParams.getCategoryId() != null) {
+            sql = sql + " AND p.category_id = :categoryId";
+            map.put("categoryId", productQueryParams.getCategoryId());
+        }
+        if (productQueryParams.getSearch() != null) {
+            sql = sql + " AND p.product_name LIKE :search";
+            map.put("search", "%" + productQueryParams.getSearch() + "%");
+        }
+
+        if (productQueryParams.getStatus() != null) {
+            sql = sql + " AND p.status = :status";
+            map.put("status", productQueryParams.getStatus().label);
+        } else {
+            sql = sql + " AND p.status = :defaultStatusId";
+            map.put("defaultStatusId", ProductStatus.DEFAULT.label);
+        }
+
+
+        List<ProductVO> productList = namedParameterJdbcTemplate.query(sql, map, new ProductVORowMapper());
+
+        return productList;
+    }
+
+    @Override
     public ProductVO getProductById(Integer productId) {
         String sql = "SELECT product_id,product_name,p.category_id,p.image_url," +
                 "price,description,stock," +
                 "category_name,p.status,p.created_date,p.last_modified_date " +
                 "FROM product p JOIN category c ON c.category_id = p.category_id " +
-                "WHERE product_id=:productId and p.status = 1";
+                "WHERE product_id=:productId and p.status = :defaultStatusId";
+        Map<String, Object> map = new HashMap<>();
+        map.put("productId", productId);
+        map.put("defaultStatusId", ProductStatus.DEFAULT.label);
+
+        List<ProductVO> productList = namedParameterJdbcTemplate.query(sql, map, new ProductVORowMapper());
+
+
+        if (productList.size() > 0) {
+            return productList.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public ProductVO getProductByIdNoFilterStatus(Integer productId) {
+        String sql = "SELECT product_id,product_name,p.category_id,p.image_url," +
+                "price,description,stock," +
+                "category_name,p.status,p.created_date,p.last_modified_date " +
+                "FROM product p JOIN category c ON c.category_id = p.category_id " +
+                "WHERE product_id=:productId";
         Map<String, Object> map = new HashMap<>();
         map.put("productId", productId);
 

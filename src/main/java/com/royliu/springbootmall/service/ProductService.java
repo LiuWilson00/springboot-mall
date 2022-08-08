@@ -1,12 +1,18 @@
 package com.royliu.springbootmall.service;
 
+import com.royliu.springbootmall.dto.ProductQueryParams;
 import com.royliu.springbootmall.dto.ProductRequest;
+import com.royliu.springbootmall.model.Category;
 import com.royliu.springbootmall.model.Product;
 import com.royliu.springbootmall.viewobject.ProductVO;
 
+import java.util.List;
+
 public interface ProductService {
 
+    List<ProductVO> getProducts(ProductQueryParams productQueryParams);
     ProductVO getProductById(Integer productId);
+    ProductVO getProductByIdNoFilterStatus(Integer productId);
 
     Integer createProduct(ProductRequest productRequest);
 

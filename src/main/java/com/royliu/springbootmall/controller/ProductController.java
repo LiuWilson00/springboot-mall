@@ -1,6 +1,7 @@
 package com.royliu.springbootmall.controller;
 
 import com.royliu.springbootmall.constant.errors.ProductErrors;
+import com.royliu.springbootmall.dto.ProductQueryParams;
 import com.royliu.springbootmall.dto.ProductRequest;
 import com.royliu.springbootmall.model.Category;
 import com.royliu.springbootmall.model.Product;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 public class ProductController {
@@ -21,6 +23,22 @@ public class ProductController {
     private ProductService productService;
     @Autowired
     private CategoryService categoryService;
+
+
+    @GetMapping("/products")
+    public ResponseEntity<List<ProductVO>> getProducts(
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Integer status
+    ) {
+        ProductQueryParams productQueryParams = new ProductQueryParams(categoryId, search, status);
+
+        List<ProductVO> products = productService.getProducts(productQueryParams);
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(products);
+    }
+
 
     @GetMapping("/products/{productId}")
     public ResponseEntity<ProductVO> getProduct(@PathVariable Integer productId) {
@@ -45,7 +63,7 @@ public class ProductController {
         }
 
         int newProductId = productService.createProduct(productRequest);
-        ProductVO newProduct = productService.getProductById(newProductId);
+        ProductVO newProduct = productService.getProductByIdNoFilterStatus(newProductId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(newProduct);
 
